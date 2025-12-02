@@ -1,75 +1,66 @@
-# React + TypeScript + Vite
+# Annotate Your Tasks — Frontend (React + Cognito + AppSync)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple full-stack demo UI that authenticates users with Amazon Cognito and lets them manage personal tasks stored in DynamoDB through an AWS AppSync GraphQL API.
 
-Currently, two official plugins are available:
+This repository contains the **frontend** only. The backend (Cognito User Pool, AppSync API, DynamoDB) is provisioned separately using **AWS CDK (TypeScript)**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Purpose
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This project exists to demonstrate:
 
-## Expanding the ESLint configuration
+- How a React app authenticates with **Amazon Cognito**
+- How the app calls a **GraphQL API (AWS AppSync)** using a JWT access token
+- How the backend enforces per-user data isolation (each user sees only their own tasks)
+- A practical, minimal example suitable for interview discussion:
+  - Auth flow (sign up, email verification, sign in)
+  - GraphQL requests from frontend
+  - Secure usage of tokens (no secrets in the browser)
+  - CRUD operations against a serverless backend
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Architecture (High Level)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **React (Vite + TypeScript)** frontend
+- **Cognito User Pool** for authentication (email verification enabled)
+- **AppSync GraphQL API** protected by Cognito
+- **DynamoDB** for task persistence
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Flow:
+
+1. User signs up → Cognito sends email verification code
+2. User confirms email → user can sign in
+3. Frontend obtains a Cognito JWT token (ID token)
+4. Frontend sends GraphQL requests to AppSync using `Authorization: <JWT>`
+5. AppSync resolver reads `ctx.identity` and scopes data to the authenticated user
+
+---
+
+## Features
+
+- Sign up (username + email + password)
+- Email verification (confirmation code)
+- Sign in (email + password)
+- Authenticated task list (per-user)
+- Create task
+- Update task status (OPEN / DONE)
+- Delete task
+- Logout
+
+---
+
+## Local Setup
+
+### 1) Prerequisites
+
+- Node.js (LTS recommended)
+- pnpm
+- A deployed backend (AppSync + Cognito + DynamoDB)
+
+### 2) Install
+
+```bash
+pnpm install
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-# Amp-appSync-front
-# Amp-appSync-front
