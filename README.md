@@ -1,4 +1,4 @@
-# Annotate Your Tasks — Frontend (React + Cognito + AppSync)
+# Frontend (React + Cognito + AppSync)
 
 A simple full-stack demo UI that authenticates users with Amazon Cognito and lets them manage personal tasks stored in DynamoDB through an AWS AppSync GraphQL API.
 
