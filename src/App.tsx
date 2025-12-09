@@ -563,6 +563,13 @@ export default function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTitle, setNewTitle] = useState("");
 
+  const orderedTasks = useMemo(() => {
+    return [...tasks].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [tasks]);
+
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -776,7 +783,7 @@ export default function App() {
 
           {mode === "tasks" && (
             <TasksView
-              tasks={tasks}
+              tasks={orderedTasks}
               newTitle={newTitle}
               busy={busy}
               onChangeNewTitle={setNewTitle}
