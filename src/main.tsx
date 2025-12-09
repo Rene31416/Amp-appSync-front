@@ -1,7 +1,17 @@
 import { Buffer } from "buffer";
 
-(globalThis as any).Buffer = Buffer;
-(globalThis as any).global = globalThis;
+const globalAny = globalThis as typeof globalThis & {
+  Buffer?: typeof Buffer;
+  global?: typeof globalThis;
+};
+
+if (!globalAny.Buffer) {
+  globalAny.Buffer = Buffer;
+}
+
+if (!globalAny.global) {
+  globalAny.global = globalThis;
+}
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
