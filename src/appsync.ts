@@ -1,9 +1,22 @@
+const appsyncUrl = import.meta.env.VITE_APPSYNC_URL;
+
+if (!appsyncUrl) {
+  throw new Error(
+    "Missing VITE_APPSYNC_URL environment variable. Check your .env.local file."
+  );
+}
+
+type GraphQLResponse<T> = {
+  data?: T;
+  errors?: Array<{ message?: string }>;
+};
+
 export async function appsyncRequest<T>(
   idToken: string,
   query: string,
   variables?: Record<string, unknown>
 ): Promise<T> {
-  const res = await fetch(import.meta.env.VITE_APPSYNC_URL, {
+  const res = await fetch(appsyncUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -12,11 +25,24 @@ export async function appsyncRequest<T>(
     body: JSON.stringify({ query, variables }),
   });
 
-  const json = await res.json();
+  if (!res.ok) {
+    const errorBody = await res.text();
+    throw new Error(
+      `AppSync request failed (${res.status} ${res.statusText}): ${
+        errorBody || "no response body"
+      }`
+    );
+  }
+
+  const json = (await res.json()) as GraphQLResponse<T>;
 
   if (json.errors?.length) {
     throw new Error(json.errors[0]?.message ?? "GraphQL error");
   }
 
-  return json.data as T;
+  if (!json.data) {
+    throw new Error("GraphQL response did not include data.");
+  }
+
+  return json.data;
 }
