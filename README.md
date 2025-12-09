@@ -64,3 +64,23 @@ Flow:
 ```bash
 pnpm install
 ```
+
+### 3) Configure environment
+
+Create a `.env.local` file that points to your deployed backend. At minimum
+these variables must be present:
+
+```
+VITE_REGION=
+VITE_USER_POOL_ID=
+VITE_USER_POOL_CLIENT_ID=
+VITE_APPSYNC_URL=
+```
+
+### 4) Run the dev server
+
+```bash
+pnpm dev
+```
+
+The app runs on [http://localhost:5173](http://localhost:5173) by default.
