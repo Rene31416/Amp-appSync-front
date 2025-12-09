@@ -6,9 +6,18 @@ import {
   CognitoUserSession,
 } from "amazon-cognito-identity-js";
 
+const userPoolId = import.meta.env.VITE_USER_POOL_ID;
+const userPoolClientId = import.meta.env.VITE_USER_POOL_CLIENT_ID;
+
+if (!userPoolId || !userPoolClientId) {
+  throw new Error(
+    "Missing Cognito environment variables. Ensure VITE_USER_POOL_ID and VITE_USER_POOL_CLIENT_ID are set."
+  );
+}
+
 const pool = new CognitoUserPool({
-  UserPoolId: import.meta.env.VITE_USER_POOL_ID,
-  ClientId: import.meta.env.VITE_USER_POOL_CLIENT_ID,
+  UserPoolId: userPoolId,
+  ClientId: userPoolClientId,
 });
 
 export function signUp(
@@ -22,6 +31,7 @@ export function signUp(
 
     if (!u) return reject(new Error("Username is required"));
     if (!e) return reject(new Error("Email is required"));
+    if (!password) return reject(new Error("Password is required"));
 
     const attrs = [new CognitoUserAttribute({ Name: "email", Value: e })];
 
@@ -56,6 +66,7 @@ export function signIn(
     const e = email.trim().toLowerCase();
 
     if (!e) return reject(new Error("Email is required"));
+    if (!password) return reject(new Error("Password is required"));
 
     const user = new CognitoUser({ Username: e, Pool: pool });
     const auth = new AuthenticationDetails({ Username: e, Password: password });
