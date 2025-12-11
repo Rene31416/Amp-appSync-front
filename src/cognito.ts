@@ -8,6 +8,7 @@ import {
 
 const userPoolId = import.meta.env.VITE_USER_POOL_ID;
 const userPoolClientId = import.meta.env.VITE_USER_POOL_CLIENT_ID;
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 if (!userPoolId || !userPoolClientId) {
   throw new Error(
@@ -31,6 +32,8 @@ export function signUp(
 
     if (!u) return reject(new Error("Username is required"));
     if (!e) return reject(new Error("Email is required"));
+    if (!emailPattern.test(e))
+      return reject(new Error("Please enter a valid email address."));
     if (!password) return reject(new Error("Password is required"));
 
     const attrs = [new CognitoUserAttribute({ Name: "email", Value: e })];
@@ -66,6 +69,8 @@ export function signIn(
     const e = email.trim().toLowerCase();
 
     if (!e) return reject(new Error("Email is required"));
+    if (!emailPattern.test(e))
+      return reject(new Error("Please enter a valid email address."));
     if (!password) return reject(new Error("Password is required"));
 
     const user = new CognitoUser({ Username: e, Pool: pool });
