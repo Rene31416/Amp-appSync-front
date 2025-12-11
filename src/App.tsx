@@ -429,10 +429,16 @@ function TasksView({
   onUpdateStatus: (taskId: string, status: string) => void;
   onDelete: (taskId: string) => void;
 }) {
+  const doneCount = tasks.filter((t) => t.status === "DONE").length;
+  const openCount = tasks.length - doneCount;
+
   return (
     <div style={{ marginTop: 18, width: "100%" }}>
       <div style={{ textAlign: "center", marginBottom: 14 }}>
         <h2 style={{ margin: 0 }}>My Tasks</h2>
+        <div style={{ fontSize: 13, opacity: 0.75 }}>
+          {openCount} open • {doneCount} done
+        </div>
         <div
           style={{
             display: "flex",
