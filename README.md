@@ -84,3 +84,15 @@ pnpm dev
 ```
 
 The app runs on [http://localhost:5173](http://localhost:5173) by default.
+
+### 5) Validate the build
+
+Before shipping changes, it helps to run the quality gates locally:
+
+```bash
+pnpm lint    # static analysis
+pnpm build   # type-check + production bundle
+```
+
+Both commands surface environment-variable issues early, so you can fix them
+before deploying the frontend.
