@@ -16,13 +16,18 @@ export async function appsyncRequest<T>(
   query: string,
   variables?: Record<string, unknown>
 ): Promise<T> {
+  const normalizedQuery = query.trim();
+  if (!normalizedQuery) {
+    throw new Error("GraphQL query cannot be empty.");
+  }
+
   const res = await fetch(appsyncUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: idToken,
     },
-    body: JSON.stringify({ query, variables }),
+    body: JSON.stringify({ query: normalizedQuery, variables }),
   });
 
   if (!res.ok) {
